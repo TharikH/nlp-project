@@ -4,6 +4,7 @@ from tkinter import filedialog,Text ,Toplevel
 import time
 import os
 from shutil import copyfile
+import prog
 
 PATHNAME=""
 ws = tk.Tk()
@@ -13,7 +14,7 @@ pdfs=[]
 
 def addFile():
     
-    filename=filedialog.askopenfilename(initialdir="/home/tharikh",title="Select File",filetypes=(("Pdf files","*.pdf"),("all files","*.*")))
+    filename=filedialog.askopenfilename(initialdir="/home/tharikh",title="Select File",filetypes=(("text files","*.txt"),("all files","*.*")))
     pdfs.append(filename)
     print(filename)
     for widget in frame.winfo_children():
@@ -32,11 +33,12 @@ def addFile():
 
 def process():
     inp=querytext.get(1.0,"end-1c")
-    print(inp)
+    ranks=prog.nlpPart(inp)
+    topwindow(ranks)
 
 
 
-def topwindow():
+def topwindow(ranks):
     newWindow = Toplevel(ws)
     newcanvas=tk.Canvas(newWindow,height=700,width=1000,bg="#263D42")
     newcanvas.pack()
@@ -46,10 +48,8 @@ def topwindow():
     heading=tk.Label(newframe,text="Ranked Documents",fg="black",bg="white",font=("Ubuntu", 20))
     heading.pack();
     i=1
-    for pdf in pdfs:
-        path=pdf.split("/")
-        name=path[len(path) - 1]
-        label=tk.Label(newframe,text=str(i)+') '+name,padx=5,pady=5)
+    for rank in ranks:
+        label=tk.Label(newframe,text=str(i)+') '+rank,padx=5,pady=5)
         label.pack()
         i=i+1
 
@@ -78,7 +78,7 @@ querytext.pack();
 upfile=tk.Button(ws,text="Upload File",padx=10,pady=5,fg="white",bg="#263D42",command=addFile)
 upfile.pack()
 
-runfile=tk.Button(ws,text="Run comparator",padx=10,pady=5,fg="white",bg="#263D42",command=topwindow)
+runfile=tk.Button(ws,text="Run comparator",padx=10,pady=5,fg="white",bg="#263D42",command=process)
 runfile.pack()
 
 ws.mainloop()
